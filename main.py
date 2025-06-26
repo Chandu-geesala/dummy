@@ -682,16 +682,16 @@ Just send me any supported link and I'll provide download links for you!
             )
 
     # =================== MAIN ===================
-def run(self):
-    application = Application.builder().token(self.bot_token).build()
-    application.add_handler(CommandHandler("start", self.start_command))
-    application.add_handler(CommandHandler("help", self.help_command))
-    application.add_handler(CommandHandler("sites", self.sites_command))
-    application.add_handler(CommandHandler("history", self.history_command))   # <--- ADD THIS LINE
-    application.add_handler(CallbackQueryHandler(self.handle_callback_query))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
-    print("🚀 Angry Downloader Bot is starting...")
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    def run(self):
+        application = Application.builder().token(self.bot_token).build()
+        application.add_handler(CommandHandler("start", self.start_command))
+        application.add_handler(CommandHandler("help", self.help_command))
+        application.add_handler(CommandHandler("sites", self.sites_command))
+        application.add_handler(CommandHandler("history", self.history_command))   # <--- ADD THIS LINE
+        application.add_handler(CallbackQueryHandler(self.handle_callback_query))
+        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+        print("🚀 Angry Downloader Bot is starting...")
+        application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 def main():
