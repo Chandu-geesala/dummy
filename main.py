@@ -169,14 +169,11 @@ I can help you download files from various platforms including:
 ✅ Fast and reliable downloads
 **Commands:**
 /start - Show this welcome message
-/help - Get help and supported sites
-/sites - View all supported sites
 **How to use:**
 Just send me any supported link and I'll provide download links for you!
         """
         keyboard = [
             [InlineKeyboardButton("📋 Supported Sites", callback_data="show_sites")],
-            [InlineKeyboardButton("ℹ️ Help", callback_data="help")],
             [InlineKeyboardButton("💬 Support Group", url="https://t.me/+7AV6zd_uvHhmYmVl")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
