@@ -4,6 +4,7 @@ import asyncio
 import aiohttp
 import logging
 import tempfile
+import random
 from urllib.parse import urlparse
 from typing import List, Dict, Any, Optional
 from datetime import datetime
@@ -34,7 +35,7 @@ class TelegramDownloaderBot:
     storage_lock = threading.Lock()
 
 
-     async def history_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def history_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         filename = "abc.txt"
         all_links = []
         try:
@@ -135,7 +136,7 @@ class TelegramDownloaderBot:
 
 
     def is_video_url(self, url):
-        extension = self.get_file_extension_from_url(url)
+        extension = self.get_extension_from_url(url)
         return extension in self.SUPPORTED_VIDEO_EXTENSIONS
 
     def is_video_file(self, filename: str) -> bool:
@@ -681,7 +682,7 @@ Just send me any supported link and I'll provide download links for you!
             )
 
     # =================== MAIN ===================
-    def run(self):
+def run(self):
     application = Application.builder().token(self.bot_token).build()
     application.add_handler(CommandHandler("start", self.start_command))
     application.add_handler(CommandHandler("help", self.help_command))
