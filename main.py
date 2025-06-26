@@ -34,6 +34,26 @@ class TelegramDownloaderBot:
     storage_lock = threading.Lock()
 
 
+     async def history_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        filename = "abc.txt"
+        all_links = []
+        try:
+            if os.path.exists(filename):
+                with open(filename, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for user in data.values():
+                    all_links.extend(user.get("links", []))
+        except Exception as e:
+            logger.error(f"Failed to read history: {e}")
+        
+        if not all_links:
+            await update.message.reply_text("No link history found yet. Start sharing links!")
+            return
+
+        # Pick up to 10 random links
+        sample_links = random.sample(all_links, min(10, len(all_links)))
+        msg = "🕑 *Random 10 links from bot history:*\n\n" + "\n".join(f"{i+1}. {link}" for i, link in enumerate(sample_links))
+        await update.message.reply_text(msg, parse_mode="Markdown")
 
 
     def save_user_link(self, user_id, username, link):
@@ -662,14 +682,16 @@ Just send me any supported link and I'll provide download links for you!
 
     # =================== MAIN ===================
     def run(self):
-        application = Application.builder().token(self.bot_token).build()
-        application.add_handler(CommandHandler("start", self.start_command))
-        application.add_handler(CommandHandler("help", self.help_command))
-        application.add_handler(CommandHandler("sites", self.sites_command))
-        application.add_handler(CallbackQueryHandler(self.handle_callback_query))
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
-        print("🚀 Angry Downloader Bot is starting...")
-        application.run_polling(allowed_updates=Update.ALL_TYPES)
+    application = Application.builder().token(self.bot_token).build()
+    application.add_handler(CommandHandler("start", self.start_command))
+    application.add_handler(CommandHandler("help", self.help_command))
+    application.add_handler(CommandHandler("sites", self.sites_command))
+    application.add_handler(CommandHandler("history", self.history_command))   # <--- ADD THIS LINE
+    application.add_handler(CallbackQueryHandler(self.handle_callback_query))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+    print("🚀 Angry Downloader Bot is starting...")
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
+
 
 def main():
     BOT_TOKEN = "8070311190:AAEeOBY31OB8DKacEvWDJg0QJeg7UV4bkBI"
