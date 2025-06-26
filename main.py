@@ -672,7 +672,7 @@ Just send me any supported link and I'll provide download links for you!
         application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 def main():
-    BOT_TOKEN = "7681281061:AAGfFSElznb1lcBVS5Wvp9afje2UymlY2zU"
+    BOT_TOKEN = "8070311190:AAEeOBY31OB8DKacEvWDJg0QJeg7UV4bkBI"
     if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
         print("❌ Please set your bot token in the BOT_TOKEN variable!")
         print("Get your token from @BotFather on Telegram")
