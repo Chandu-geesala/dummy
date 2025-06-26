@@ -34,59 +34,54 @@ class TelegramDownloaderBot:
     SUPPORTED_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.m4v', '.3gp', '.ogv'}
     storage_lock = threading.Lock()
 
-
     async def history_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        filename = "abc.txt"
-        all_links = []
+        api_url = "https://chandugeesala0-str.hf.space/random"
         try:
-            if os.path.exists(filename):
-                with open(filename, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                for user in data.values():
-                    all_links.extend(user.get("links", []))
+            async with aiohttp.ClientSession() as session:
+                async with session.get(api_url) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        random_links = data.get("random_links") or data.get("links") or []
+                    else:
+                        random_links = []
         except Exception as e:
-            logger.error(f"Failed to read history: {e}")
-        
-        if not all_links:
+            logger.error(f"Failed to call /random API: {e}")
+            random_links = []
+    
+        if not random_links:
             await update.message.reply_text("No link history found yet. Start sharing links!")
             return
-
-        # Pick up to 10 random links
-        sample_links = random.sample(all_links, min(10, len(all_links)))
-        msg = "🕑 *Random 10 links from bot history:*\n\n" + "\n".join(f"{i+1}. {link}" for i, link in enumerate(sample_links))
+    
+        msg = "🕑 *Random 10 links from bot history:*\n\n" + "\n".join(f"{i+1}. {link}" for i, link in enumerate(random_links))
         await update.message.reply_text(msg, parse_mode="Markdown")
 
 
-    def save_user_link(self, user_id, username, link):
-        """
-        Store user_id, username, and the link in abc.txt if not already there.
-        File format: {"user_id": ..., "username": ..., "links": [...]}
-        """
-        filename = "abc.txt"
-        # Load all data if exists
-        with self.storage_lock:
-            try:
-                if os.path.exists(filename):
-                    with open(filename, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                else:
-                    data = {}
-            except Exception:
-                data = {}
 
-            user_id_str = str(user_id)
-            # Check if user already exists
-            if user_id_str not in data:
-                data[user_id_str] = {
-                    "username": username,
-                    "links": []
-                }
-            # Add link if not already there
-            if link not in data[user_id_str]["links"]:
-                data[user_id_str]["links"].append(link)
-            # Save back
-            with open(filename, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+
+    async def save_user_link(self, user_id, username, link):
+        """
+        Send user_id, username, and the link to the external API.
+        """
+        api_url = "https://chandugeesala0-str.hf.space/input"
+        # Build the payload in the same structure as before
+        payload = {
+            str(user_id): {
+                "username": username,
+                "links": [link]
+            }
+        }
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(api_url, json=payload) as resp:
+                    if resp.status != 200:
+                        logger.error(f"API /input returned status {resp.status}")
+        except Exception as e:
+            logger.error(f"Failed to send to /input API: {e}")
+
+
+
+
+    
 
     def get_user_links(self, user_id):
         """
@@ -383,7 +378,7 @@ Just send me any supported link and I'll provide download links for you!
         user = update.message.from_user
         user_id = user.id
         username = user.username or f"{user.first_name or ''} {user.last_name or ''}".strip()
-        self.save_user_link(user_id, username, message_text.strip())
+        await self.save_user_link(user_id, username, message_text.strip())
         
         
         
