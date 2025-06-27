@@ -301,7 +301,7 @@ Just send me any supported link and I'll provide download links for you!
                         await progress_msg.edit_text(
                             "😊 Failed to download the video.\n\n"
                             "👉 For large videos or better support, try our Android app!\n"
-                            "[📲 Download Android App](https://play.google.com/store/apps/details?id=com.chandu.angrydownloader)",
+                            "[📲 Download Android App](https://play.google.com/store/apps/details?id=com.chandu.angry_downloader)",
                             parse_mode='Markdown'
                         )
 
@@ -568,7 +568,7 @@ Just send me any supported link and I'll provide download links for you!
                 "👉 _You can use our Android app to download entire folders easily!_\n"
             )
             keyboard = [
-                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
+                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angry_downloader")]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
             await update.effective_chat.send_message(
@@ -630,7 +630,7 @@ Just send me any supported link and I'll provide download links for you!
                 "👉 *Try in our Android app for more features!*"
             )
             keyboard = [
-                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
+                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angry_downloader")]
             ]
             reply_markup = InlineKeyboardMarkup(keyboard)
             await update.effective_chat.send_message(
