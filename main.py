@@ -298,7 +298,13 @@ Just send me any supported link and I'll provide download links for you!
                                         last_percent = percent
                             tmp_file_path = tmp_file.name
                     else:
-                        await progress_msg.edit_text("❌ Failed to download the video.")
+                        await progress_msg.edit_text(
+                            "❌ Failed to download the video.\n\n"
+                            "👉 For large videos or better support, try our Android app!\n"
+                            "[📲 Download Android App](https://play.google.com/store/apps/details?id=com.chandu.angrydownloader)",
+                            parse_mode='Markdown'
+                        )
+
                         return
     
             await progress_msg.edit_text("✅ Download complete! Sending...")
