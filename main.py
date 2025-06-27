@@ -584,10 +584,10 @@ Just send me any supported link and I'll provide download links for you!
         if download_urls[2]:
             keyboard.append([InlineKeyboardButton("🔄 Download Link 3", url=download_urls[2])])
     
-        # if is_video:
-        #     keyboard.append([
-        #         InlineKeyboardButton("🎥 Get Video", callback_data=callback_data)
-        #     ])
+        if is_video:
+            keyboard.append([
+                InlineKeyboardButton("🎥 Get Video", callback_data=callback_data)
+            ])
         if not any(download_urls):
             message_text += "\n❌ No download links available for this file."
             keyboard = []
