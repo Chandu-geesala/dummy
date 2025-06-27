@@ -439,7 +439,7 @@ Just send me any supported link and I'll provide download links for you!
                             )
                     else:
                         await processing_msg.edit_text(
-                            "❌ Error connecting to TeraBox API. Please try again later."
+                            "❌ Error connecting . Please try again later."
                         )
         except Exception as e:
             logger.error(f"TeraBox processing error: {e}")
