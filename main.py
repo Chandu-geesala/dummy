@@ -246,39 +246,40 @@ Just send me any supported link and I'll provide download links for you!
 
 
 
+
+    
     async def download_and_send_video(self, message, context, video_url):
         try:
             file_ext = self.get_extension_from_url(video_url)
             file_name = "video"
-
+    
             # 1. Send a progress message
             progress_msg = await message.reply_text("⬇️ Downloading... 0%")
-
+    
             async with aiohttp.ClientSession() as session:
                 async with session.get(video_url) as resp:
-                    
-                        if resp.status == 200:
-                            total_size = int(resp.headers.get("Content-Length", 0))
-                            if total_size and total_size > self.MAX_FILE_SIZE:
-                                await progress_msg.edit_text(
-                                    f"❌ Sorry, this feature is only available for files < 100 MB.\n"
-                                    f"Detected file size: {self.format_file_size(total_size)}\n\n"
-                                    "Please use the direct download links instead!"
-                                )
-                                return
-
-
+                    if resp.status == 200:
+                        total_size = int(resp.headers.get("Content-Length", 0))
+                        if total_size and total_size > self.MAX_FILE_SIZE:
+                            await progress_msg.edit_text(
+                                f"❌ Sorry, this feature is only available for files < 100 MB.\n"
+                                f"Detected file size: {self.format_file_size(total_size)}\n\n"
+                                "Please use the direct download links instead!"
+                            )
+                            return
+    
                         # Extension guessing as before
                         if not file_ext:
                             content_type = resp.headers.get("Content-Type", "")
                             ext_from_type = mimetypes.guess_extension(content_type.split(";")[0].strip())
                             file_ext = ext_from_type if ext_from_type else ".mp4"
+    
                         disp = resp.headers.get("Content-Disposition", "")
                         if "filename=" in disp:
                             file_name = disp.split("filename=")[1].split(";")[0].strip('"\' ')
                         else:
                             file_name = f"video{file_ext}"
-
+    
                         # Download in chunks and update progress
                         chunk_size = 1024 * 1024  # 1 MB
                         downloaded = 0
@@ -299,9 +300,9 @@ Just send me any supported link and I'll provide download links for you!
                     else:
                         await progress_msg.edit_text("❌ Failed to download the video.")
                         return
-
+    
             await progress_msg.edit_text("✅ Download complete! Sending...")
-
+    
             # Send as video if extension is a known video, else as document
             if file_ext.lower() in [".mp4", ".mkv", ".webm"]:
                 with open(tmp_file_path, "rb") as video_file:
@@ -311,14 +312,15 @@ Just send me any supported link and I'll provide download links for you!
                     await message.reply_document(video_file, filename=file_name)
             os.remove(tmp_file_path)
             await progress_msg.delete()
+    
         except Exception as e:
             logger.error(f"Error downloading/sending video: {e}")
             try:
                 await progress_msg.edit_text("❌ Error sending video file.")
             except:
                 await message.reply_text("❌ Error sending video file.")
-
-
+    
+    
 
 
 
