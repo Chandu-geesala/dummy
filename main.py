@@ -33,6 +33,8 @@ logger = logging.getLogger(__name__)
 class TelegramDownloaderBot:
     SUPPORTED_VIDEO_EXTENSIONS = {'.mp4', '.webm', '.avi', '.mov', '.mkv', '.flv', '.wmv', '.m4v', '.3gp', '.ogv'}
     storage_lock = threading.Lock()
+    MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+
 
     async def history_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         api_url = "https://chandugeesala0-str.hf.space/random"
@@ -255,7 +257,14 @@ Just send me any supported link and I'll provide download links for you!
                 async with session.get(video_url) as resp:
                     if resp.status == 200:
                         # Get file size if available
-                        total_size = int(resp.headers.get("Content-Length", 0))
+                        if total_size and total_size > MAX_FILE_SIZE:
+                            await progress_msg.edit_text(
+                                f"❌ Sorry, this feature is only available for files < 100 MB.\n"
+                                f"Detected file size: {self.format_file_size(total_size)}\n\n"
+                                "Please use the direct download links instead!"
+                            )
+                            return
+
                         # Extension guessing as before
                         if not file_ext:
                             content_type = resp.headers.get("Content-Type", "")
