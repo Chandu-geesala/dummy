@@ -256,15 +256,17 @@ Just send me any supported link and I'll provide download links for you!
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(video_url) as resp:
-                    if resp.status == 200:
-                        # Get file size if available
-                        if total_size and total_size > MAX_FILE_SIZE:
-                            await progress_msg.edit_text(
-                                f"❌ Sorry, this feature is only available for files < 100 MB.\n"
-                                f"Detected file size: {self.format_file_size(total_size)}\n\n"
-                                "Please use the direct download links instead!"
-                            )
-                            return
+                    
+                        if resp.status == 200:
+                            total_size = int(resp.headers.get("Content-Length", 0))
+                            if total_size and total_size > self.MAX_FILE_SIZE:
+                                await progress_msg.edit_text(
+                                    f"❌ Sorry, this feature is only available for files < 100 MB.\n"
+                                    f"Detected file size: {self.format_file_size(total_size)}\n\n"
+                                    "Please use the direct download links instead!"
+                                )
+                                return
+
 
                         # Extension guessing as before
                         if not file_ext:
