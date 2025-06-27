@@ -510,9 +510,17 @@ Just send me any supported link and I'll provide download links for you!
 
 
 
-
+    
     async def send_terabox_item(self, update: Update, context: ContextTypes.DEFAULT_TYPE, item: Dict):
         name = item.get('name', 'Unknown')
+        is_dir = item.get('is_dir') == '1'   # <---- Check if it's a folder
+    
+        if is_dir:
+            # If it's a folder, just reply "Coming soon" and return
+            await update.effective_chat.send_message("Folder Support Coming soon😊")
+            return
+    
+        # The rest of your code for single files (NO CHANGE)
         size = int(item.get('size', 0))
         size_formatted = self.format_file_size(size)
         is_video = self.is_video_file(name)
@@ -525,11 +533,6 @@ Just send me any supported link and I'll provide download links for you!
         message_text += "📥 **Download Options:**"
         keyboard = []
         download_urls = item.get('download_urls', ['', '', ''])
-        # Save download urls for the fs_id for callback quick access
-        
-        
-        
-        fs_id = item.get('fs_id', '')
         fs_id = str(item.get('fs_id', ''))
         params = {
             "mode": item.get("mode"),
@@ -541,32 +544,24 @@ Just send me any supported link and I'll provide download links for you!
             "cookie": item.get("cookie"),
             "fs_id": fs_id,
         }
-
-        unique_id = str(uuid.uuid4())[:8]  # short id for the mapping
+        unique_id = str(uuid.uuid4())[:8]
         self.video_callback_params[unique_id] = params
-
         callback_data = f"get_video|{unique_id}"
-        
-        
+    
         if fs_id:
             self.fs_id_to_download_urls[fs_id] = download_urls
-       
+    
         if download_urls[0]:
             keyboard.append([InlineKeyboardButton("🔗 Download Link 1", url=download_urls[0])])
         if download_urls[1]:
             keyboard.append([InlineKeyboardButton("⚡ Download Link 2", url=download_urls[1])])
         if download_urls[2]:
             keyboard.append([InlineKeyboardButton("🔄 Download Link 3", url=download_urls[2])])
-        # 🎥 Video button (only for videos, optional)
-      
-      
-      
+    
         if is_video:
             keyboard.append([
                 InlineKeyboardButton("🎥 Get Video", callback_data=callback_data)
             ])
-        
-        
         if not any(download_urls):
             message_text += "\n❌ No download links available for this file."
             keyboard = []
@@ -591,6 +586,7 @@ Just send me any supported link and I'll provide download links for you!
                 reply_markup=reply_markup,
                 parse_mode='Markdown'
             )
+
             
             
             
