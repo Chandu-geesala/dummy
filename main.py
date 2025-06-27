@@ -52,8 +52,13 @@ class TelegramDownloaderBot:
             await update.message.reply_text("No link history found yet. Start sharing links!")
             return
     
-        msg = "🕑 *Random 10 links from bot history:*\n\n" + "\n".join(f"{i+1}. {link}" for i, link in enumerate(random_links))
-        await update.message.reply_text(msg, parse_mode="Markdown")
+        # Send each link as a separate message for preview
+        for i, link in enumerate(random_links):
+            await update.message.reply_text(f"{i+1}. {link}")
+    
+        # Optionally, you can also send a summary message before or after:
+        # await update.message.reply_text("🕑 Sent 10 random links from history!")
+
 
 
 
