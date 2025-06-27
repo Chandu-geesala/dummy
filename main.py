@@ -485,18 +485,39 @@ Just send me any supported link and I'll provide download links for you!
             logger.error(f"Error fetching download URLs: {e}")
         return []
 
+
+
+
+    
+
+    # async def send_terabox_results(self, update: Update, context: ContextTypes.DEFAULT_TYPE, data: Dict):
+    #     items = data.get('list', [])
+    #     for item in items:
+    #         is_dir = item.get('is_dir') == '1'
+    #         if is_dir:
+    #             if item.get('list'):
+    #                 folder_items = await self.process_items_without_download_links(item['list'])
+    #                 for folder_item in folder_items:
+    #                     await self.send_terabox_item(update, context, folder_item)
+    #         else:
+    #             await self.send_terabox_item(update, context, item)
+
+
     async def send_terabox_results(self, update: Update, context: ContextTypes.DEFAULT_TYPE, data: Dict):
         items = data.get('list', [])
         for item in items:
             is_dir = item.get('is_dir') == '1'
+            # If it's a folder, just show "Coming soon"
             if is_dir:
-                if item.get('list'):
-                    folder_items = await self.process_items_without_download_links(item['list'])
-                    for folder_item in folder_items:
-                        await self.send_terabox_item(update, context, folder_item)
+                await self.send_terabox_item(update, context, item)
             else:
                 await self.send_terabox_item(update, context, item)
 
+
+
+
+
+    
     async def process_items_without_download_links(self, items: List[Dict]) -> List[Dict]:
         processed_items = []
         for item in items:
