@@ -4,6 +4,7 @@ import asyncio
 import aiohttp
 import logging
 import tempfile
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import random
 from urllib.parse import urlparse
 from typing import List, Dict, Any, Optional
@@ -551,9 +552,22 @@ Just send me any supported link and I'll provide download links for you!
         is_dir = item.get('is_dir') == '1'   # <---- Check if it's a folder
     
         if is_dir:
-            # If it's a folder, just reply "Coming soon" and return
-            await update.effective_chat.send_message("Folder Support Coming soon😊")
-            return
+        # Tell user to use the app for folders, and add a button
+        message_text = (
+            "📁 *Folder support is not available in the Telegram bot yet.*\n"
+            "👉 _You can use our Android app to download entire folders easily!_\n"
+        )
+        keyboard = [
+            [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.effective_chat.send_message(
+            text=message_text,
+            reply_markup=reply_markup,
+            parse_mode='Markdown'
+        )
+        return
+
     
         # The rest of your code for single files (NO CHANGE)
         size = int(item.get('size', 0))
@@ -597,9 +611,24 @@ Just send me any supported link and I'll provide download links for you!
             keyboard.append([
                 InlineKeyboardButton("🎥 Get Video", callback_data=callback_data)
             ])
+
         if not any(download_urls):
-            message_text += "\n❌ No download links available for this file."
-            keyboard = []
+            message_text += (
+                "\n❌ No download links available for this file.\n"
+                "Sometimes, our bot can’t fetch links due to site restrictions.\n\n"
+                "👉 *Try in our Android app for more features!*"
+            )
+            keyboard = [
+                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await update.effective_chat.send_message(
+                text=message_text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            return
+        
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
         if item.get('image'):
             try:
