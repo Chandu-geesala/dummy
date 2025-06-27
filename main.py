@@ -262,7 +262,7 @@ Just send me any supported link and I'll provide download links for you!
                         total_size = int(resp.headers.get("Content-Length", 0))
                         if total_size and total_size > self.MAX_FILE_SIZE:
                             await progress_msg.edit_text(
-                                f"😅 Sorry, this feature is only available for files < 100 MB.\n"
+                                f"😊 Sorry, this feature is only available for files < 100 MB.\n"
                                 f"Detected file size: {self.format_file_size(total_size)}\n\n"
                                 "Please use the direct download links instead!"
                             )
@@ -299,7 +299,7 @@ Just send me any supported link and I'll provide download links for you!
                             tmp_file_path = tmp_file.name
                     else:
                         await progress_msg.edit_text(
-                            "😅 Failed to download the video.\n\n"
+                            "😊 Failed to download the video.\n\n"
                             "👉 For large videos or better support, try our Android app!\n"
                             "[📲 Download Android App](https://play.google.com/store/apps/details?id=com.chandu.angrydownloader)",
                             parse_mode='Markdown'
@@ -322,9 +322,9 @@ Just send me any supported link and I'll provide download links for you!
         except Exception as e:
             logger.error(f"Error downloading/sending video: {e}")
             try:
-                await progress_msg.edit_text("😅 Error sending video file.")
+                await progress_msg.edit_text("😊 Error sending video file.")
             except:
-                await message.reply_text("😅 Error sending video file.")
+                await message.reply_text("😊 Error sending video file.")
     
     
 
@@ -344,7 +344,7 @@ Just send me any supported link and I'll provide download links for you!
                 await self.handle_get_video_callback(update, context, query)
         except Exception as e:
             logger.error(f"Callback error: {e}")
-            await query.message.reply_text("😅 Something went wrong. Please try again.")
+            await query.message.reply_text("😊 Something went wrong. Please try again.")
 
 
 
@@ -353,7 +353,7 @@ Just send me any supported link and I'll provide download links for you!
             _, unique_id = query.data.split("|", 1)
             params = self.video_callback_params.get(unique_id)
             if not params:
-                await query.message.reply_text("😅 Sorry, this button is expired. Please refresh links.")
+                await query.message.reply_text("😊 Sorry, this button is expired. Please refresh links.")
                 return
 
             logger.info(f"[DEBUG] Params from callback: {params}")
@@ -373,19 +373,19 @@ Just send me any supported link and I'll provide download links for you!
             logger.info(f"[DEBUG] Re-fetched download_urls: {download_urls}")
 
             if not download_urls or not any(download_urls):
-                await query.message.reply_text("😅 Download link not found or expired.")
+                await query.message.reply_text("😊 Download link not found or expired.")
                 return
 
             video_url = next((url for url in download_urls if url), None)
             if not video_url:
-                await query.message.reply_text("😅 No valid video download link found.")
+                await query.message.reply_text("😊 No valid video download link found.")
                 return
 
             await self.download_and_send_video(query.message, context, video_url)
 
         except Exception as e:
             logger.error(f"Error in handle_get_video_callback: {e}")
-            await query.message.reply_text("😅 Internal error, please try again later.")
+            await query.message.reply_text("😊 Internal error, please try again later.")
 
 
 
@@ -416,7 +416,7 @@ Just send me any supported link and I'll provide download links for you!
         except Exception as e:
             logger.error(f"Error processing link: {e}")
             await processing_msg.edit_text(
-                "😅 Sorry, something went wrong while processing your link. Please try again later."
+                "😊 Sorry, something went wrong while processing your link. Please try again later."
             )
 
     # =================== TeraBox LINK HANDLING ===================
@@ -435,16 +435,16 @@ Just send me any supported link and I'll provide download links for you!
                             await self.send_terabox_results(update, context, data)
                         else:
                             await processing_msg.edit_text(
-                                "😅 Failed to process TeraBox link. Please check the link and try again."
+                                "😊 Failed to process TeraBox link. Please check the link and try again."
                             )
                     else:
                         await processing_msg.edit_text(
-                            "😅 Error connecting . Please try again later."
+                            "😊 Error connecting . Please try again later."
                         )
         except Exception as e:
             logger.error(f"TeraBox processing error: {e}")
             await processing_msg.edit_text(
-                "😅 Something went wrong processing the TeraBox link."
+                "😊 Something went wrong processing the TeraBox link."
             )
 
     async def generate_all_download_links(self, data: Dict):
@@ -625,7 +625,7 @@ Just send me any supported link and I'll provide download links for you!
 
         if not any(download_urls):
             message_text += (
-                "\n😅 No download links available for this file.\n"
+                "\n😊 No download links available for this file.\n"
                 "Sometimes, our bot can’t fetch links due to site restrictions.\n\n"
                 "👉 *Try in our Android app for more features!*"
             )
@@ -682,16 +682,16 @@ Just send me any supported link and I'll provide download links for you!
                             await self.send_vkr_results(update, context, data['data'])
                         else:
                             await processing_msg.edit_text(
-                                "😅 No downloadable content found for this link."
+                                "😊 No downloadable content found for this link."
                             )
                     else:
                         await processing_msg.edit_text(
-                            "😅 Error processing link. Please try again later."
+                            "😊 Error processing link. Please try again later."
                         )
         except Exception as e:
             logger.error(f"VKR processing error: {e}")
             await processing_msg.edit_text(
-                "😅 Connection issue. Please try later 😊"
+                "😊 Connection issue. Please try later 😊"
             )
 
     async def send_vkr_results(self, update: Update, context: ContextTypes.DEFAULT_TYPE, data: Dict):
@@ -720,7 +720,7 @@ Just send me any supported link and I'll provide download links for you!
         # but you'd have to manage state differently (e.g. by message_id)
         # If no download links available
         if not keyboard:
-            message_text += "\n😅 No download links available for this content."
+            message_text += "\n😊 No download links available for this content."
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
         if thumbnails and isinstance(thumbnails, list) and len(thumbnails) > 0:
             thumbnail_url = thumbnails[0].get('url') if isinstance(thumbnails[0], dict) else thumbnails[0]
@@ -760,7 +760,7 @@ Just send me any supported link and I'll provide download links for you!
 def main():
     BOT_TOKEN = "8070311190:AAEeOBY31OB8DKacEvWDJg0QJeg7UV4bkBI"
     if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
-        print("😅 Please set your bot token in the BOT_TOKEN variable!")
+        print("😊 Please set your bot token in the BOT_TOKEN variable!")
         print("Get your token from @BotFather on Telegram")
         return
     bot = TelegramDownloaderBot(BOT_TOKEN)
