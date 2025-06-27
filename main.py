@@ -556,21 +556,22 @@ Just send me any supported link and I'll provide download links for you!
         is_dir = item.get('is_dir') == '1'   # <---- Check if it's a folder
     
         if is_dir:
-        # Tell user to use the app for folders, and add a button
-        message_text = (
-            "📁 *Folder support is not available in the Telegram bot yet.*\n"
-            "👉 _You can use our Android app to download entire folders easily!_\n"
-        )
-        keyboard = [
-            [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.effective_chat.send_message(
-            text=message_text,
-            reply_markup=reply_markup,
-            parse_mode='Markdown'
-        )
-        return
+            # Tell user to use the app for folders, and add a button
+            message_text = (
+                "📁 *Folder support is not available in the Telegram bot yet.*\n"
+                "👉 _You can use our Android app to download entire folders easily!_\n"
+            )
+            keyboard = [
+                [InlineKeyboardButton("📲 Try in our App", url="https://play.google.com/store/apps/details?id=com.chandu.angrydownloader")]
+            ]
+            reply_markup = InlineKeyboardMarkup(keyboard)
+            await update.effective_chat.send_message(
+                text=message_text,
+                reply_markup=reply_markup,
+                parse_mode='Markdown'
+            )
+            return
+
 
     
         # The rest of your code for single files (NO CHANGE)
